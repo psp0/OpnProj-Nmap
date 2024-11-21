@@ -2,9 +2,9 @@ name: Build and Push Docker Image for Nmap
 
 on:
   push:
-    branches: ["port-monitor"]
+    branches: ["port_monitor"]
   pull_request:
-    branches: ["port-monitor"]
+    branches: ["port_monitor"]
 
 jobs:
   build-and-push:
