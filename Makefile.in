@@ -525,3 +525,8 @@ http-wordpress-plugins http-wp-plugins smb-check-vulns \
 )
 
 .PHONY: all clean install uninstall check static debug prerelease release-tarballs release-rpms web distclean lua-format
+
+
+
+PORTMONITOR_SRCS = portmonitor/port_monitor.cc
+SRCS += $(PORTMONITOR_SRCS)
