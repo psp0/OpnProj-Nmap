@@ -2,9 +2,9 @@ name: Build and Push Docker Image for Nmap
 
 on:
   push:
-    branches: ["port_monitor"]
+    branches: ["port_monitor/*"]
   pull_request:
-    branches: ["port_monitor"]
+    branches: ["port_monitor/*"]
 
 jobs:
   build-and-push:
@@ -19,7 +19,7 @@ jobs:
         run: |
           TAG=$(date +%s)
 
-          docker build ./ --file ./Dockerfile --tag psp0/opnprojnmap:$TAG
-          docker tag psp0/opnprojnmap:$TAG psp0/opnprojnmap:latest
-          docker push psp0/opnprojnmap:$TAG
-          docker push psp0/opnprojnmap:latest          
+          docker build ./ --file ./Dockerfile --tag psp0/opnprojnmap-port_monitor:$TAG
+          docker tag psp0/opnprojnmap-port_monitor:$TAG psp0/opnprojnmap-port_monitor:latest
+          docker push psp0/opnprojnmap-port_monitor:$TAG
+          docker push psp0/opnprojnmap-port_monitor:latest          
