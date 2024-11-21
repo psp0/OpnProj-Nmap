@@ -19,7 +19,7 @@ jobs:
         run: |
           TAG=$(date +%s)
 
-          docker build ./ --file ./nmap/Dockerfile --tag psp0/opnprojnmap:$TAG
+          docker build ./ --file ./Dockerfile --tag psp0/opnprojnmap:$TAG
           docker tag psp0/opnprojnmap:$TAG psp0/opnprojnmap:latest
           docker push psp0/opnprojnmap:$TAG
           docker push psp0/opnprojnmap:latest
