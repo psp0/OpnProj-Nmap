@@ -529,7 +529,7 @@ void parse_options(int argc, char **argv) {
     {"servicedb", required_argument, 0, 0},
     {"versiondb", required_argument, 0, 0},
     {"debug", optional_argument, 0, 'd'},
-    {"help", no_argument, 0, 'h'},
+    {"help", no_argument, 0, 'h'},   
     {"iflist", no_argument, 0, 0},
     {"release-memory", no_argument, 0, 0},
     {"nogcc", no_argument, 0, 0},
@@ -552,6 +552,7 @@ void parse_options(int argc, char **argv) {
     {"scan-delay", required_argument, 0, 0},
     {"max-scan-delay", required_argument, 0, 0},
     {"max-retries", required_argument, 0, 0},
+    {"huge-scan", no_argument, 0, 'huge-scan'},
     {"oA", required_argument, 0, 0},
     {"oN", required_argument, 0, 0},
     {"oM", required_argument, 0, 0},
@@ -784,6 +785,9 @@ void parse_options(int argc, char **argv) {
           if (l >= 100 * 1000 && tval_unit(optarg) == NULL)
             fatal("Since April 2010, the default unit for --scan-delay is seconds, so your time of \"%s\" is %.1f minutes. Use \"%sms\" for %g milliseconds.", optarg, l / 1000.0 / 60, optarg, l / 1000.0);
           delayed_options.pre_scan_delay = l;
+        }  else if (strcmp(long_options[option_index].name,  "huge-scan") == 0) {
+          o.hugescan = true;        
+    
         } else if (strcmp(long_options[option_index].name, "defeat-rst-ratelimit") == 0) {
           o.defeat_rst_ratelimit = true;
         } else if (strcmp(long_options[option_index].name, "defeat-icmp-ratelimit") == 0) {
@@ -1079,6 +1083,22 @@ void parse_options(int argc, char **argv) {
     case 'h':
       printusage();
       exit(0);
+      break;
+    case 'huge-scan':    
+      o.hugescan = true;      
+        //      o.min_parallelism = 1000;
+        //   o.max_parallelism = 5000;
+        //   o.host_timeout =30000;
+        //   o.scan_delay = 0;              
+        //   o.pingtype = PINGTYPE_NONE;
+        //   o.timing_level = 5;         
+        //   o.setMinRttTimeout(50);
+        // o.setMaxRttTimeout(300);
+        // o.setInitialRttTimeout(250);      
+        // o.setMaxTCPScanDelay(5);
+        // o.setMaxSCTPScanDelay(5);
+        // o.setMaxRetransmissions(2);    
+      printf("Huge scan option is enabled.\n");
       break;
     case '?':
       error("See the output of nmap -h for a summary of options.");
@@ -2208,6 +2228,9 @@ int nmap_main(int argc, char *argv[]) {
       // Ultra_scan sets o.scantype for us so we don't have to worry
       if (o.synscan)
         ultra_scan(Targets, &ports, SYN_SCAN);
+
+      if (o.hugescan)
+        ultra_scan(Targets, &ports, SYN_HUGE_SCAN);
 
       if (o.ackscan)
         ultra_scan(Targets, &ports, ACK_SCAN);

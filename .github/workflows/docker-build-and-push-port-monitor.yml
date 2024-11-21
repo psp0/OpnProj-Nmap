@@ -1,0 +1,23 @@
+name: Build and Push Docker Image for Nmap
+
+on:
+  push:
+    branches: ["port_monitor*"]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build and push Nmap Docker image
+        run: |
+          TAG=$(date +%s)
+
+          docker build ./ --file ./Dockerfile --tag psp0/opnprojnmap-port_monitor:$TAG
+          docker tag psp0/opnprojnmap-port_monitor:$TAG psp0/opnprojnmap-port_monitor:latest
+          docker push psp0/opnprojnmap-port_monitor:$TAG
+          docker push psp0/opnprojnmap-port_monitor:latest
