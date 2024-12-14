@@ -65,7 +65,7 @@
 #define NMAP_H
 
 /************************INCLUDES**********************************/
-
+bool portmonitor;
 #ifdef HAVE_CONFIG_H
 #include "nmap_config.h"
 #else
@@ -112,14 +112,14 @@
 #endif
 
 #ifndef NMAP_NAME
-#define NMAP_NAME "Nmap"
+#define NMAP_NAME "Nmap_test"
 #endif
 #define NMAP_URL "https://nmap.org"
 
 #define _STR(X) #X
 #define STR(X)  _STR(X)
 
-#ifndef NMAP_VERSION
+#ifndef NMAP_VERSION 1
 /* Edit this definition only within the quotes, because it is read from this
    file by the makefiles. */
 #define NMAP_MAJOR 7

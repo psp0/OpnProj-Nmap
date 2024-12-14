@@ -197,6 +197,7 @@ static void printusage() {
   "port_monitor 기능 테스트 \n"
          "Usage: nmap [Scan Type(s)] [Options] {target specification}\n"
          "TARGET SPECIFICATION:\n"
+         "port_monitor 기능 테스트 \n"
          "  Can pass hostnames, IP addresses, networks, etc.\n"
          "  Ex: scanme.nmap.org, microsoft.com/24, 192.168.0.1; 10.0.0-255.1-254\n"
          "  -iL <inputfilename>: Input from list of hosts/networks\n"
@@ -204,6 +205,7 @@ static void printusage() {
          "  --exclude <host1[,host2][,host3],...>: Exclude hosts/networks\n"
          "  --excludefile <exclude_file>: Exclude list from file\n"
          "HOST DISCOVERY:\n"
+         "port_monitor 기능 테스트 \n"
          "  -sL: List Scan - simply list targets to scan\n"
          "  -sn: Ping Scan - disable port scan\n"
          "  -Pn: Treat all hosts as online -- skip host discovery\n"
@@ -610,6 +612,8 @@ void parse_options(int argc, char **argv) {
     {"port-ratio", required_argument, 0, 0},
     {"exclude-ports", required_argument, 0, 0},
     {"top-ports", required_argument, 0, 0},
+    {"new-option", required_argument, 0, 't'},
+    {"port-monitor", no_argument, 0, 'pmr'},
 #ifndef NOLUA
     {"script", required_argument, 0, 0},
     {"script-trace", no_argument, 0, 0},
@@ -1030,6 +1034,9 @@ void parse_options(int argc, char **argv) {
       delayed_options.af = AF_INET6;
 #endif /* !HAVE_IPV6 */
       break;
+    case 'pmr':
+      o.portmonitor = true;
+      break;
     case 'A':
       delayed_options.advanced = true;
       break;
@@ -1183,7 +1190,9 @@ void parse_options(int argc, char **argv) {
               assert(ports.syn_ping_count > 0);
             }
             break;
-
+          case 't':
+            o.new_option = optarg;
+            printf("test\n");
           case 'T':
             delayed_options.warn_deprecated(buf, "PA");
           case 'A':
@@ -1328,6 +1337,10 @@ void parse_options(int argc, char **argv) {
         case 'S':
           o.synscan = 1;
           break;
+        case 't':
+          o.new_option = optarg;
+          printf("test\n");
+          break;
         case 'T':
           o.connectscan = 1;
           break;
@@ -1357,6 +1370,10 @@ void parse_options(int argc, char **argv) {
         }
         p++;
       }
+      break;
+    case 't':
+      o.new_option = optarg;
+      printf("test\n");
       break;
     case 'T':
       p=optarg+1;*p=*p>'5'?*p:*(p-1)!=*p?'\0':*(p-1)='\0'==(*p-'1')?(error("%s",(char*)(k+8)),'5'):*p;
@@ -1840,6 +1857,22 @@ int nmap_main(int argc, char *argv[]) {
   time_t timep;
   char mytime[128];
   struct addrset *exclude_group;
+
+  void port_monitor_init() {
+    if (o.portmonitor) {
+        PortMonitor& monitor = PortMonitor::getInstance();
+        for (unsigned int i = 0; i < Targets.size(); i++) {
+            monitor.addTarget(Targets[i]);
+        }
+        monitor.startMonitoring();
+    }
+}
+
+void port_monitor_cleanup() {
+    if (o.portmonitor) {
+        PortMonitor::getInstance().stopMonitoring();
+    }
+}
 #ifndef NOLUA
   /* Pre-Scan and Post-Scan script results datastructure */
   ScriptResults *script_scan_results = NULL;
