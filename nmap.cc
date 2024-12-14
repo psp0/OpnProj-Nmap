@@ -194,6 +194,7 @@ static int parse_scanflags(char *arg) {
 static void printusage() {
 
   printf("%s %s ( %s )\n"
+  "port_monitor 기능 테스트 \n"
          "Usage: nmap [Scan Type(s)] [Options] {target specification}\n"
          "TARGET SPECIFICATION:\n"
          "  Can pass hostnames, IP addresses, networks, etc.\n"
