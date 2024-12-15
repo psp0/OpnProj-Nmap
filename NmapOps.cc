@@ -72,6 +72,7 @@
 NmapOps o;
 
 NmapOps::NmapOps() {
+  portmonitor = false;
   datadir = NULL;
   xsl_stylesheet = NULL;
   Initialize();

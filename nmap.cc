@@ -197,6 +197,8 @@ static void printusage() {
   "port_monitor 기능 테스트 \n"
          "Usage: nmap [Scan Type(s)] [Options] {target specification}\n"
          "TARGET SPECIFICATION:\n"
+        "PORT MONITORING:\n"
+        "  --port-monitor: Enable continuous port monitoring mode\n"
          "port_monitor 기능 테스트 \n"
          "  Can pass hostnames, IP addresses, networks, etc.\n"
          "  Ex: scanme.nmap.org, microsoft.com/24, 192.168.0.1; 10.0.0-255.1-254\n"
@@ -613,7 +615,7 @@ void parse_options(int argc, char **argv) {
     {"exclude-ports", required_argument, 0, 0},
     {"top-ports", required_argument, 0, 0},
     {"new-option", required_argument, 0, 't'},
-    {"port-monitor", no_argument, 0, 'pmr'},
+    {"port-monitor", no_argument, 0, 0},
 #ifndef NOLUA
     {"script", required_argument, 0, 0},
     {"script-trace", no_argument, 0, 0},
@@ -1857,6 +1859,12 @@ int nmap_main(int argc, char *argv[]) {
   time_t timep;
   char mytime[128];
   struct addrset *exclude_group;
+
+    if (o.portmonitor) {
+        if (o.verbose)
+            log_write(LOG_STDOUT, "Starting port monitoring mode...\n");
+        port_monitor_init();
+    }
 
   void port_monitor_init() {
     if (o.portmonitor) {

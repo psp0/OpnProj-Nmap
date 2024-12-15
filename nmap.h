@@ -65,7 +65,6 @@
 #define NMAP_H
 
 /************************INCLUDES**********************************/
-bool portmonitor;
 #ifdef HAVE_CONFIG_H
 #include "nmap_config.h"
 #else
@@ -126,7 +125,7 @@ bool portmonitor;
 #define NMAP_MINOR 95
 #define NMAP_BUILD 1
 /* SVN, BETA, etc. */
-#define NMAP_SPECIAL "SVN"
+#define NMAP_SPECIAL "SVN_01"
 
 #define NMAP_VERSION STR(NMAP_MAJOR) "." STR(NMAP_MINOR) NMAP_SPECIAL
 #define NMAP_NUM_VERSION STR(NMAP_MAJOR) "." STR(NMAP_MINOR) "." STR(NMAP_BUILD) ".0"
