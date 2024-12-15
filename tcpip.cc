@@ -65,6 +65,9 @@
 #include "nmap.h"
 
 #include <locale.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <netinet/tcp.h>
 #include "nbase.h"
 #include <dnet.h>
 #include "tcpip.h"
@@ -129,17 +132,18 @@ int nmap_async_raw_socket() {
   }
   if (fcntl(rawsd, F_SETFL, flags | O_NONBLOCK) == -1) {
     perror("fcntl F_SETFL");
-    close(rawsd);
-    return -1;
-  }
-nt opt = 1;
-if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
-    perror("setsockopt");
-    exit(EXIT_FAILURE);
+int opt = 1;
+if (setsockopt(rawsd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
+  perror("setsockopt");
+  close(rawsd);
+  return -1;
 }
 
-// TCP_NODELAY 설정 (Nagle 알고리즘 비활성화)
-if (setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt)) < 0) {
+if (setsockopt(rawsd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt)) < 0) {
+  perror("setsockopt");
+  close(rawsd);
+  return -1;
+}
     perror("setsockopt");
     exit(EXIT_FAILURE);
 }
