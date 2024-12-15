@@ -552,7 +552,7 @@ void parse_options(int argc, char **argv) {
     {"scan-delay", required_argument, 0, 0},
     {"max-scan-delay", required_argument, 0, 0},
     {"max-retries", required_argument, 0, 0},
-    {"huge-scan", required_argument, 0, 'huge-scan'},
+    {"huge-scan", no_argument, 0, 'huge-scan'},
     {"oA", required_argument, 0, 0},
     {"oN", required_argument, 0, 0},
     {"oM", required_argument, 0, 0},
