@@ -864,6 +864,7 @@ void UltraScanInfo::Init(std::vector<Target *> &Targets, const struct scan_lists
   send_rate_meter.start(&now);
   tcp_scan = udp_scan = sctp_scan = prot_scan = false;
   ping_scan = noresp_open_scan = ping_scan_arp = ping_scan_nd = false;
+  async_scan = false;
   memset((char *) &ptech, 0, sizeof(ptech));
   perf.init();
   switch (scantype) {
@@ -877,6 +878,11 @@ void UltraScanInfo::Init(std::vector<Target *> &Targets, const struct scan_lists
   case SYN_SCAN:
   case WINDOW_SCAN:
     tcp_scan = true;
+    break;
+  case SYN_HUGE_SCAN:
+    tcp_scan = true;
+    perf.pingtime = 0;
+    async_scan = true;    
     break;
   case UDP_SCAN:
     noresp_open_scan = true;
@@ -968,7 +974,11 @@ void UltraScanInfo::Init(std::vector<Target *> &Targets, const struct scan_lists
 #ifdef WIN32
       win32_fatal_raw_sockets(Targets[0]->deviceName());
 #endif
-      rawsd = nmap_raw_socket();
+      if (scantype == SYN_HUGE_SCAN) {
+        rawsd = nmap_async_raw_socket();
+      } else {
+        rawsd = nmap_raw_socket();
+      }
       if (rawsd < 0)
         pfatal("Couldn't open a raw socket. "
 #if defined(sun) && defined(__SVR4)

@@ -100,6 +100,7 @@ typedef enum {
   HOST_DISCOVERY,
   ACK_SCAN,
   SYN_SCAN,
+  SYN_HUGE_SCAN,
   FIN_SCAN,
   XMAS_SCAN,
   UDP_SCAN,
