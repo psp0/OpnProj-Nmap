@@ -1083,6 +1083,10 @@ void parse_options(int argc, char **argv) {
       printusage();
       exit(0);
       break;
+    case 'hs':    
+      o.hugescan = true;
+      printf("Huge scan option is enabled.\n");
+      break;
     case '?':
       error("See the output of nmap -h for a summary of options.");
       exit(-1);
