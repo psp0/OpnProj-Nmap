@@ -105,7 +105,7 @@ class NmapOps {
   bool TCPScan(); /* Returns true if at least one chosen scan type is TCP */
   bool UDPScan(); /* Returns true if at least one chosen scan type is UDP */
   bool SCTPScan(); /* Returns true if at least one chosen scan type is SCTP */
-  bool portmonitor;
+
   /* Returns true if at least one chosen scan type uses raw packets.
      It does not currently cover cases such as TCP SYN ping scan which
      can go either way based on whether the user is root or IPv6 is
@@ -122,6 +122,7 @@ class NmapOps {
   bool have_pcap;
   u8 debugging;
   bool resuming;
+  bool portmonitor;
 
 #define PACKET_SEND_NOPREF 1
 #define PACKET_SEND_ETH_WEAK 2

@@ -2,11 +2,15 @@
 #define PORT_MONITOR_H
 
 #include "nmap.h"
-#include "NmapOps.h"
-#include <vector>
-#include <string>
+#include "Target.h"
 #include <pthread.h>
-#include <time.h>
+#include <vector>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <ctime>
+#include <cstring>
 
 class PortMonitor {
 public:
@@ -14,11 +18,11 @@ public:
         static PortMonitor instance;
         return instance;
     }
-
+    
     void addTarget(Target* target);
     void startMonitoring();
     void stopMonitoring();
-    
+
 private:
     PortMonitor() : running(false), check_interval(60) {}
     
@@ -38,7 +42,6 @@ private:
     void notifyStateChange(const MonitoredPort& port, bool new_state);
 };
 
-// 새로운 명령줄 옵션을 위한 함수
 void port_monitor_init();
 void port_monitor_cleanup();
 

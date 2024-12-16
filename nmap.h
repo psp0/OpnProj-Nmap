@@ -65,6 +65,9 @@
 #define NMAP_H
 
 /************************INCLUDES**********************************/
+void port_monitor_init();
+void port_monitor_cleanup();
+
 #ifdef HAVE_CONFIG_H
 #include "nmap_config.h"
 #else

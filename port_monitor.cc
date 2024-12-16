@@ -1,7 +1,7 @@
 #include "port_monitor.h"
 #include "NmapOps.h"
 #include "output.h"
-#include "timing.h"
+#include "nmap_error.h"
 
 extern NmapOps o;
 
@@ -33,9 +33,35 @@ void PortMonitor::stopMonitoring() {
 }
 
 bool PortMonitor::checkPort(Target* target) {
-    // Nmap의 기존 스캔 기능 활용
-    PortList* plist = &target->ports;
-    return plist->isPortOpen(target->ports.nextPort(0, NULL, IPPROTO_TCP));
+    Port port;
+    Port *current = NULL;
+    
+    // 첫 번째 포트 가져오기
+    current = target->ports.nextPort(NULL, &port, IPPROTO_TCP, PORT_UNKNOWN);
+    if (!current) return false;
+    
+    int portno = current->portno;
+    
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock < 0) return false;
+
+    struct sockaddr_in addr;
+    memset(&addr, 0, sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(portno);
+    
+    const struct sockaddr_storage* ss = target->TargetSockAddr();
+    memcpy(&addr.sin_addr, &((struct sockaddr_in*)ss)->sin_addr, sizeof(struct in_addr));
+
+    struct timeval timeout;
+    timeout.tv_sec = 3;
+    timeout.tv_usec = 0;
+    setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+    setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+
+    bool is_open = (connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == 0);
+    close(sock);
+    return is_open;
 }
 
 void* PortMonitor::monitorLoop(void* arg) {
@@ -53,7 +79,7 @@ void* PortMonitor::monitorLoop(void* arg) {
             port.last_check = time(NULL);
         }
         
-        sleep(monitor->check_interval);
+        usleep(monitor->check_interval * 1000000);
     }
     
     return NULL;
@@ -69,4 +95,19 @@ void PortMonitor::notifyStateChange(const MonitoredPort& port, bool new_state) {
               port.target->targetipstr(),
               port.is_open ? "OPEN" : "CLOSED",
               new_state ? "OPEN" : "CLOSED");
+}
+
+void port_monitor_init() {
+    if (o.portmonitor) {
+        if (o.verbose)
+            log_write(LOG_STDOUT, "Starting port monitoring mode...\n");
+        PortMonitor& monitor = PortMonitor::getInstance();
+        monitor.startMonitoring();
+    }
+}
+
+void port_monitor_cleanup() {
+    if (o.portmonitor) {
+        PortMonitor::getInstance().stopMonitoring();
+    }
 }
