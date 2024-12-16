@@ -65,6 +65,9 @@
 #include "nmap.h"
 
 #include <locale.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <netinet/tcp.h>
 #include "nbase.h"
 #include <dnet.h>
 #include "tcpip.h"

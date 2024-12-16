@@ -178,7 +178,7 @@ class NmapOps {
   int max_parallelism; // 0 means it has not been set
   int min_parallelism; // 0 means it has not been set
   double topportlevel; // -1 means it has not been set
-
+  bool txtscan;
   /* The maximum number of OS detection (gen2) tries we will make
      without any matches before giving up on a host.  We may well give
      up after fewer tries anyway, particularly if the target isn't

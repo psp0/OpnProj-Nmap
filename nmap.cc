@@ -90,6 +90,7 @@
 #include "xml.h"
 #include "scan_lists.h"
 #include "payload.h"
+#include "portscan.h"
 
 #ifndef NOLUA
 #include "nse_main.h"
@@ -529,7 +530,7 @@ void parse_options(int argc, char **argv) {
     {"servicedb", required_argument, 0, 0},
     {"versiondb", required_argument, 0, 0},
     {"debug", optional_argument, 0, 'd'},
-    {"help", no_argument, 0, 'h'},
+    {"help", no_argument, 0, 'h'},   
     {"iflist", no_argument, 0, 0},
     {"release-memory", no_argument, 0, 0},
     {"nogcc", no_argument, 0, 0},
@@ -552,6 +553,7 @@ void parse_options(int argc, char **argv) {
     {"scan-delay", required_argument, 0, 0},
     {"max-scan-delay", required_argument, 0, 0},
     {"max-retries", required_argument, 0, 0},
+    {"txt-scan", no_argument, 0, 'txt-scan'},
     {"oA", required_argument, 0, 0},
     {"oN", required_argument, 0, 0},
     {"oM", required_argument, 0, 0},
@@ -784,6 +786,9 @@ void parse_options(int argc, char **argv) {
           if (l >= 100 * 1000 && tval_unit(optarg) == NULL)
             fatal("Since April 2010, the default unit for --scan-delay is seconds, so your time of \"%s\" is %.1f minutes. Use \"%sms\" for %g milliseconds.", optarg, l / 1000.0 / 60, optarg, l / 1000.0);
           delayed_options.pre_scan_delay = l;
+        }  else if (strcmp(long_options[option_index].name,  "txt-scan") == 0) {
+          o.txtscan = true;        
+          
         } else if (strcmp(long_options[option_index].name, "defeat-rst-ratelimit") == 0) {
           o.defeat_rst_ratelimit = true;
         } else if (strcmp(long_options[option_index].name, "defeat-icmp-ratelimit") == 0) {
@@ -1079,6 +1084,10 @@ void parse_options(int argc, char **argv) {
     case 'h':
       printusage();
       exit(0);
+      break;
+    case 'txt-scan':    
+      o.txtscan = true;             
+      printf("txt based scan begin!\n");
       break;
     case '?':
       error("See the output of nmap -h for a summary of options.");
@@ -2208,6 +2217,10 @@ int nmap_main(int argc, char *argv[]) {
       // Ultra_scan sets o.scantype for us so we don't have to worry
       if (o.synscan)
         ultra_scan(Targets, &ports, SYN_SCAN);
+
+      if (o.txtscan){        
+        perform_port_scan();   
+      }
 
       if (o.ackscan)
         ultra_scan(Targets, &ports, ACK_SCAN);
