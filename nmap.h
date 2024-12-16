@@ -65,8 +65,6 @@
 #define NMAP_H
 
 /************************INCLUDES**********************************/
-void port_monitor_init();
-void port_monitor_cleanup();
 
 #ifdef HAVE_CONFIG_H
 #include "nmap_config.h"
@@ -114,21 +112,21 @@ void port_monitor_cleanup();
 #endif
 
 #ifndef NMAP_NAME
-#define NMAP_NAME "Nmap_test"
+#define NMAP_NAME "Nmap"
 #endif
 #define NMAP_URL "https://nmap.org"
 
 #define _STR(X) #X
 #define STR(X)  _STR(X)
 
-#ifndef NMAP_VERSION 1
+#ifndef NMAP_VERSION
 /* Edit this definition only within the quotes, because it is read from this
    file by the makefiles. */
 #define NMAP_MAJOR 7
 #define NMAP_MINOR 95
 #define NMAP_BUILD 1
 /* SVN, BETA, etc. */
-#define NMAP_SPECIAL "SVN_01"
+#define NMAP_SPECIAL "SVN"
 
 #define NMAP_VERSION STR(NMAP_MAJOR) "." STR(NMAP_MINOR) NMAP_SPECIAL
 #define NMAP_NUM_VERSION STR(NMAP_MAJOR) "." STR(NMAP_MINOR) "." STR(NMAP_BUILD) ".0"
