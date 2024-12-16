@@ -234,7 +234,7 @@ class NmapOps {
   /* Delay between probes, in milliseconds */
   unsigned int scan_delay;
   bool open_only;
-
+  bool fastMode;
   int scanflags; /* if not -1, this value should dictate the TCP flags
                     for the core portscanning routine (eg to change a
                     FIN scan into a PSH scan.  Sort of a hack, but can

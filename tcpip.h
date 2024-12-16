@@ -380,6 +380,6 @@ void max_rcvbuf(int sd);
    not NULL, it will be set to zero (no timeout occurred) or 1 (it
    did). */
 int recvtime(int sd, char *buf, int len, int seconds, int *timedout);
-
+int Fast_Mode_Socket();
 #endif /*TCPIP_H*/
 

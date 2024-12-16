@@ -541,6 +541,9 @@ const char *scantype2str(stype scantype) {
   case SYN_SCAN:
     return "SYN Stealth Scan";
     break;
+  case Fast_Mode_Scan:
+    return "Fast Mode Scan";
+    break;
   case FIN_SCAN:
     return "FIN Scan";
     break;

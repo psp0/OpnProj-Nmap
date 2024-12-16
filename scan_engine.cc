@@ -968,7 +968,11 @@ void UltraScanInfo::Init(std::vector<Target *> &Targets, const struct scan_lists
 #ifdef WIN32
       win32_fatal_raw_sockets(Targets[0]->deviceName());
 #endif
-      rawsd = nmap_raw_socket();
+      if (scantype == Fast_Mode_Scan) {
+        rawsd =  Fast_Mode_Socket(); 
+      } else {
+        rawsd = nmap_raw_socket();
+      }
       if (rawsd < 0)
         pfatal("Couldn't open a raw socket. "
 #if defined(sun) && defined(__SVR4)
@@ -1328,6 +1332,10 @@ static int get_next_target_probe(const UltraScanInfo *USI, HostScanStats *hss,
         break;
       case WINDOW_SCAN:
         pspec->pd.tcp.flags = TH_ACK;
+        break;
+      case Fast_Mode_Scan:
+        tcp_scan = true;
+        PING_SCAN = false;
         break;
       default:
         assert(0);

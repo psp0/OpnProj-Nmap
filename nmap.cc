@@ -573,6 +573,7 @@ void parse_options(int argc, char **argv) {
     {"fuzzy", no_argument, 0, 0}, /* Alias for osscan_guess */
     {"packet-trace", no_argument, 0, 0}, /* Display all packets sent/rcv */
     {"version-trace", no_argument, 0, 0}, /* Display -sV related activity */
+    {"fastMode", required_argument, 0, 0},
     {"data", required_argument, 0, 0},
     {"data-string", required_argument, 0, 0},
     {"data-length", required_argument, 0, 0},
@@ -823,6 +824,7 @@ void parse_options(int argc, char **argv) {
 #endif
         } else if (strcmp(long_options[option_index].name, "version-trace") == 0) {
           o.setVersionTrace(true);
+          o.fastMode();
           o.debugging++;
         } else if (strcmp(long_options[option_index].name, "data") == 0) {
           delayed_options.raw_scan_options = true;

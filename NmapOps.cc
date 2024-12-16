@@ -273,6 +273,7 @@ void NmapOps::Initialize() {
   decoyturn = -1;
   osscan = false;
   servicescan = false;
+  fastscan = false;
   override_excludeports = false;
   version_intensity = 7;
   pingtype = PINGTYPE_UNKNOWN;

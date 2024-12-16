@@ -551,6 +551,7 @@ public:
   stype scantype;
   bool tcp_scan; /* scantype is a type of TCP scan */
   bool udp_scan;
+  bool async_scan; 
   bool sctp_scan; /* scantype is a type of SCTP scan */
   bool prot_scan;
   bool ping_scan; /* Includes trad. ping scan & arp scan */
