@@ -65,6 +65,9 @@
 #include "nmap.h"
 
 #include <locale.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <netinet/tcp.h>
 #include "nbase.h"
 #include <dnet.h>
 #include "tcpip.h"
@@ -111,6 +114,51 @@ int nmap_raw_socket() {
 
   return rawsd;
 }
+
+int nmap_huge_raw_socket() {
+  int rawsd;
+  int one = 1;
+
+  rawsd = socket(AF_INET, SOCK_RAW | SOCK_NONBLOCK, IPPROTO_RAW);
+  if (rawsd < 0)
+    return rawsd;
+
+  int flags = fcntl(rawsd, F_GETFL, 0);
+  if (flags == -1) {
+    perror("fcntl F_GETFL");
+    close(rawsd);
+    return -1;
+  }
+  if (fcntl(rawsd, F_SETFL, flags | O_NONBLOCK) == -1) {
+    perror("fcntl F_SETFL");
+int opt = 1;
+if (setsockopt(rawsd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
+  perror("setsockopt");
+  close(rawsd);
+  return -1;
+}
+
+if (setsockopt(rawsd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt)) < 0) {
+  perror("setsockopt");
+  close(rawsd);
+  return -1;
+}
+    perror("setsockopt");
+    exit(EXIT_FAILURE);
+}
+
+  if (setsockopt(rawsd, SOL_SOCKET, SO_BROADCAST, (const char *) &one, sizeof(int)) != 0) {
+    error("Failed to secure socket broadcasting permission");
+    perror("setsockopt");
+  }
+#ifndef WIN32
+  sethdrinclude(rawsd);
+#endif
+  socket_bindtodevice(rawsd, o.device);
+
+  return rawsd;
+}
+
 
 /* Fill buf (up to buflen -- truncate if necessary but always
    terminate) with a short representation of the packet stats.
