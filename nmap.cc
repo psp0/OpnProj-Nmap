@@ -529,7 +529,7 @@ void parse_options(int argc, char **argv) {
     {"servicedb", required_argument, 0, 0},
     {"versiondb", required_argument, 0, 0},
     {"debug", optional_argument, 0, 'd'},
-    {"help", no_argument, 0, 'h'},
+    {"help", no_argument, 0, 'h'},   
     {"iflist", no_argument, 0, 0},
     {"release-memory", no_argument, 0, 0},
     {"nogcc", no_argument, 0, 0},
@@ -573,7 +573,6 @@ void parse_options(int argc, char **argv) {
     {"fuzzy", no_argument, 0, 0}, /* Alias for osscan_guess */
     {"packet-trace", no_argument, 0, 0}, /* Display all packets sent/rcv */
     {"version-trace", no_argument, 0, 0}, /* Display -sV related activity */
-    {"fastMode", required_argument, 0, 0},
     {"data", required_argument, 0, 0},
     {"data-string", required_argument, 0, 0},
     {"data-length", required_argument, 0, 0},
@@ -785,7 +784,9 @@ void parse_options(int argc, char **argv) {
           if (l >= 100 * 1000 && tval_unit(optarg) == NULL)
             fatal("Since April 2010, the default unit for --scan-delay is seconds, so your time of \"%s\" is %.1f minutes. Use \"%sms\" for %g milliseconds.", optarg, l / 1000.0 / 60, optarg, l / 1000.0);
           delayed_options.pre_scan_delay = l;
-        } else if (strcmp(long_options[option_index].name, "defeat-rst-ratelimit") == 0) {
+        } else if (strcmp(long_options[option_index].name,  "fast-mode") == 0) {
+          o.fastMode = true;       
+        }else if (strcmp(long_options[option_index].name, "defeat-rst-ratelimit") == 0) {
           o.defeat_rst_ratelimit = true;
         } else if (strcmp(long_options[option_index].name, "defeat-icmp-ratelimit") == 0) {
           o.defeat_icmp_ratelimit = true;
@@ -824,8 +825,8 @@ void parse_options(int argc, char **argv) {
 #endif
         } else if (strcmp(long_options[option_index].name, "version-trace") == 0) {
           o.setVersionTrace(true);
-          o.fastMode();
-          o.debugging++;
+          o.fastMode = true;
+          o.timing_level = 5;         
         } else if (strcmp(long_options[option_index].name, "data") == 0) {
           delayed_options.raw_scan_options = true;
           if (o.extra_payload)
@@ -2211,6 +2212,9 @@ int nmap_main(int argc, char *argv[]) {
       if (o.synscan)
         ultra_scan(Targets, &ports, SYN_SCAN);
 
+      if(o.fastMode)
+        ultra_scan(Targets, &ports , Fast_Mode_Scan);
+        
       if (o.ackscan)
         ultra_scan(Targets, &ports, ACK_SCAN);
 
