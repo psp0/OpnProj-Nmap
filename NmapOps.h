@@ -178,7 +178,8 @@ class NmapOps {
   int max_parallelism; // 0 means it has not been set
   int min_parallelism; // 0 means it has not been set
   double topportlevel; // -1 means it has not been set
-
+  bool hugescan;
+  bool fastMode;
   /* The maximum number of OS detection (gen2) tries we will make
      without any matches before giving up on a host.  We may well give
      up after fewer tries anyway, particularly if the target isn't
@@ -234,7 +235,6 @@ class NmapOps {
   /* Delay between probes, in milliseconds */
   unsigned int scan_delay;
   bool open_only;
-  bool fastMode;
   int scanflags; /* if not -1, this value should dictate the TCP flags
                     for the core portscanning routine (eg to change a
                     FIN scan into a PSH scan.  Sort of a hack, but can

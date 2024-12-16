@@ -115,9 +115,8 @@ int nmap_raw_socket() {
   return rawsd;
 }
 
-int fast_mode_socket(){
+int Fast_Mode_Socket(){
   int rawsd;
-  int one = 1;
 
   rawsd = socket(AF_INET, SOCK_RAW | SOCK_NONBLOCK, IPPROTO_RAW);
   if (rawsd < 0)

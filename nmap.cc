@@ -523,6 +523,7 @@ void parse_options(int argc, char **argv) {
 #endif
 
   struct option long_options[] = {
+    {"fast-mode", required_argument, 0,'f'},
     {"version", no_argument, 0, 'V'},
     {"verbose", no_argument, 0, 'v'},
     {"datadir", required_argument, 0, 0},
@@ -653,10 +654,28 @@ void parse_options(int argc, char **argv) {
   while ((arg = getopt_long_only(argc, argv, "46Ab:D:d::e:Ffg:hIi:M:m:nO::o:P::p:qRrS:s::T:Vv::", long_options, &option_index)) != EOF) {
     switch (arg) {
     case 0:
+       if (strcmp(long_options[option_index].name,  "fast-mode") == 0) {
+          o.fastMode = true; 
+          o.min_parallelism = 10;
+          o.max_parallelism = 1000;
+          o.version_intensity = 3;
+          delayed_options.pre_max_retries = 1;
+          o.timing_level = 5;
+          printf("Option is Running");    
+      }          
+      break;
 #ifndef NOLUA
       if (strcmp(long_options[option_index].name, "script") == 0) {
         o.script = true;
         o.chooseScripts(optarg);
+      } else if (strcmp(long_options[option_index].name,  "fast-mode") == 0) {
+          o.fastMode = true; 
+          o.min_parallelism = 10;
+          o.max_parallelism = 1000;
+          o.version_intensity = 3;
+          delayed_options.pre_max_retries = 1;
+          o.timing_level = 5;
+          printf("Option is Running");    
       } else if (strcmp(long_options[option_index].name, "script-args") == 0) {
         o.scriptargs = strdup(optarg);
       } else if (strcmp(long_options[option_index].name, "script-args-file") == 0) {
@@ -680,6 +699,14 @@ void parse_options(int argc, char **argv) {
           if (l < 1 || l > 50)
             fatal("Bogus --max-os-tries argument specified, must be between 1 and 50 (inclusive)");
           o.setMaxOSTries(l);
+        }else if (strcmp(long_options[option_index].name,  "fast-mode") == 0) {
+          o.fastMode = true;
+          o.min_parallelism = 10;
+          o.max_parallelism = 1000;
+          o.version_intensity = 3;
+          delayed_options.pre_max_retries = 1;
+          o.timing_level = 5;
+          printf("Option is Running");    
         } else if (strcmp(long_options[option_index].name, "max-rtt-timeout") == 0) {
           l = tval2msecs(optarg);
           if (l < 5)
@@ -776,6 +803,7 @@ void parse_options(int argc, char **argv) {
           o.version_intensity = 2;
         } else if (strcmp(long_options[option_index].name, "version-all") == 0) {
           o.version_intensity = 9;
+          printf("Option is Running");   
         } else if (strcmp(long_options[option_index].name, "scan-delay") == 0) {
           l = tval2msecs(optarg);
           if (l < 0)
@@ -784,9 +812,7 @@ void parse_options(int argc, char **argv) {
           if (l >= 100 * 1000 && tval_unit(optarg) == NULL)
             fatal("Since April 2010, the default unit for --scan-delay is seconds, so your time of \"%s\" is %.1f minutes. Use \"%sms\" for %g milliseconds.", optarg, l / 1000.0 / 60, optarg, l / 1000.0);
           delayed_options.pre_scan_delay = l;
-        } else if (strcmp(long_options[option_index].name,  "fast-mode") == 0) {
-          o.fastMode = true;       
-        }else if (strcmp(long_options[option_index].name, "defeat-rst-ratelimit") == 0) {
+        } else if (strcmp(long_options[option_index].name, "defeat-rst-ratelimit") == 0) {
           o.defeat_rst_ratelimit = true;
         } else if (strcmp(long_options[option_index].name, "defeat-icmp-ratelimit") == 0) {
           o.defeat_icmp_ratelimit = true;
@@ -826,7 +852,14 @@ void parse_options(int argc, char **argv) {
         } else if (strcmp(long_options[option_index].name, "version-trace") == 0) {
           o.setVersionTrace(true);
           o.fastMode = true;
-          o.timing_level = 5;         
+        } else if (strcmp(long_options[option_index].name,  "fast-mode") == 0) {
+          o.fastMode = true;
+          o.min_parallelism = 10;
+          o.max_parallelism = 1000;
+          o.version_intensity = 3;
+          delayed_options.pre_max_retries = 1;
+          o.timing_level = 5;
+          printf("Option is Running");    
         } else if (strcmp(long_options[option_index].name, "data") == 0) {
           delayed_options.raw_scan_options = true;
           if (o.extra_payload)
