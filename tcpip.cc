@@ -115,6 +115,57 @@ int nmap_raw_socket() {
   return rawsd;
 }
 
+int fast_mode_socket(){
+  int rawsd;
+  int one = 1;
+
+  rawsd = socket(AF_INET, SOCK_RAW | SOCK_NONBLOCK, IPPROTO_RAW);
+  if (rawsd < 0)
+    return rawsd;
+
+  int flags = fcntl(rawsd, F_GETFL, 0);
+  if (flags == -1) {
+    perror("fcntl F_GETFL");
+    close(rawsd);
+    return -1;
+  }
+  if (fcntl(rawsd, F_SETFL, flags | O_NONBLOCK) == -1) {
+    perror("fcntl F_SETFL");
+    close(rawsd);
+    return -1;
+  }
+
+  int opt = 1;
+  if (setsockopt(rawsd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
+    perror("setsockopt");
+    close(rawsd);
+    return -1;
+  }
+
+  int send_buf_size = 256 * 1024;
+  if (setsockopt(rawsd, SOL_SOCKET, SO_SNDBUF, &send_buf_size, sizeof(send_buf_size)) < 0) {
+    perror("setsockopt SO_SNDBUF");
+    close(rawsd);
+    return -1;
+  }
+
+  int recv_buf_size = 256 * 1024;
+  if (setsockopt(rawsd, SOL_SOCKET, SO_RCVBUF, &recv_buf_size, sizeof(recv_buf_size)) < 0) {
+    perror("setsockopt SO_RCVBUF");
+    close(rawsd);
+    return -1;
+  }
+  
+  int ttl = 64;
+  if (setsockopt(rawsd, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl)) < 0) {
+    perror("setsockopt IP_TTL");
+    close(rawsd);
+    return -1;
+  }
+
+  return rawsd;
+}
+
 int nmap_async_raw_socket() {
   int rawsd;
   int one = 1;

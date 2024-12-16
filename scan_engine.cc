@@ -821,6 +821,9 @@ static void set_default_port_state(std::vector<Target *> &targets, stype scantyp
     case SYN_HUGE_SCAN:
       (*target)->ports.setDefaultPortState(IPPROTO_TCP, PORT_OPENFILTERED);
       break;
+    case Fast_Mode_Scan:
+      (*target)->ports.setDefaultPortState(IPPROTO_TCP, PORT_OPENFILTERED);
+      break;
     case SCTP_INIT_SCAN:
       (*target)->ports.setDefaultPortState(IPPROTO_SCTP, PORT_FILTERED);
       break;
@@ -885,6 +888,11 @@ void UltraScanInfo::Init(std::vector<Target *> &Targets, const struct scan_lists
   case SYN_HUGE_SCAN:
     tcp_scan = true; 
     async_scan = true;    
+    break;
+  case Fast_Mode_Scan:
+    tcp_scan = true;   
+    ping_scan = false;
+    async_scan = true;
     break;
   case UDP_SCAN:
     noresp_open_scan = true;
@@ -981,6 +989,12 @@ void UltraScanInfo::Init(std::vector<Target *> &Targets, const struct scan_lists
       } else {
         rawsd = nmap_raw_socket();
       }
+      if (scantype == Fast_Mode_Scan){
+        rawsd = fast_mode_socket();
+      } else {
+        rawsd = nmap_raw_socket();
+      }
+
       if (rawsd < 0)
         pfatal("Couldn't open a raw socket. "
 #if defined(sun) && defined(__SVR4)

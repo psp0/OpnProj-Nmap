@@ -101,6 +101,7 @@ typedef enum {
   ACK_SCAN,
   SYN_SCAN,
   SYN_HUGE_SCAN,
+  Fast_Mode_Scan,
   FIN_SCAN,
   XMAS_SCAN,
   UDP_SCAN,

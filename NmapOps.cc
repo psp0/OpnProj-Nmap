@@ -273,6 +273,7 @@ void NmapOps::Initialize() {
   decoyturn = -1;
   osscan = false;
   hugescan = false;
+  fastMode = false;
   servicescan = false;
   override_excludeports = false;
   version_intensity = 7;

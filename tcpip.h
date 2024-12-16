@@ -78,6 +78,7 @@ class Target;
 
 int nmap_raw_socket();
 int nmap_async_raw_socket();
+int fast_mode_socket();
 
 /* Used for tracing all packets sent or received (eg the
    --packet-trace option) */

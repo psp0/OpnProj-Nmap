@@ -1,17 +1,36 @@
 name: Build and Push Docker Image for Nmap
+<<<<<<< HEAD
 on:
   push:
     branches: ["huge_scan*"]
+=======
+
+on:
+  push:
+    branches: ["huge_scan*"]
+
+>>>>>>> 3c08c4de4 (Create docker-build-and-push-huge-scan.yml)
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+<<<<<<< HEAD
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
       - name: Build and push Nmap Docker image
         run: |
           TAG=$(date +%s)
+=======
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build and push Nmap Docker image
+        run: |
+          TAG=$(date +%s)
+
+>>>>>>> 3c08c4de4 (Create docker-build-and-push-huge-scan.yml)
           docker build ./ --file ./Dockerfile --tag psp0/opnprojnmap-huge_scan:$TAG
           docker tag psp0/opnprojnmap-huge_scan:$TAG psp0/opnprojnmap-huge_scan:latest
           docker push psp0/opnprojnmap-huge_scan:$TAG
