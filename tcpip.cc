@@ -65,6 +65,9 @@
 #include "nmap.h"
 
 #include <locale.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <netinet/tcp.h>
 #include "nbase.h"
 #include <dnet.h>
 #include "tcpip.h"
@@ -112,7 +115,7 @@ int nmap_raw_socket() {
   return rawsd;
 }
 
-int Fast_Mode_Socket() {
+int fast_mode_socket(){
   int rawsd;
   int one = 1;
 
@@ -152,7 +155,7 @@ int Fast_Mode_Socket() {
     close(rawsd);
     return -1;
   }
-
+  
   int ttl = 64;
   if (setsockopt(rawsd, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl)) < 0) {
     perror("setsockopt IP_TTL");
@@ -162,6 +165,7 @@ int Fast_Mode_Socket() {
 
   return rawsd;
 }
+
 /* Fill buf (up to buflen -- truncate if necessary but always
    terminate) with a short representation of the packet stats.
    Returns buf.  Aborts if there is a problem. */
