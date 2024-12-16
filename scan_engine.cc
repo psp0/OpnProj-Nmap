@@ -917,6 +917,11 @@ void UltraScanInfo::Init(std::vector<Target *> &Targets, const struct scan_lists
      * notice drops until we start sending retransmits after RLD_TIME_MS. */
     perf.pingtime = RLD_TIME_MS * 1000 / 4;
     break;
+  case Fast_Mode_Scan:
+    tcp_scan = true;   
+    ping_scan = false;
+    async_scan = true;
+    break;
   case PING_SCAN_ND:
     ping_scan = true;
     ping_scan_nd = true;
@@ -1332,10 +1337,6 @@ static int get_next_target_probe(const UltraScanInfo *USI, HostScanStats *hss,
         break;
       case WINDOW_SCAN:
         pspec->pd.tcp.flags = TH_ACK;
-        break;
-      case Fast_Mode_Scan:
-        tcp_scan = true;
-        PING_SCAN = false;
         break;
       default:
         assert(0);
