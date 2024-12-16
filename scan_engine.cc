@@ -821,6 +821,9 @@ static void set_default_port_state(std::vector<Target *> &targets, stype scantyp
     case SCTP_INIT_SCAN:
       (*target)->ports.setDefaultPortState(IPPROTO_SCTP, PORT_FILTERED);
       break;
+    case Fast_Mode_Scan:
+      (*target)->ports.setDefaultPortState(IPPROTO_TCP, PORT_OPENFILTERED);
+      break;
     case NULL_SCAN:
     case FIN_SCAN:
     case MAIMON_SCAN:
