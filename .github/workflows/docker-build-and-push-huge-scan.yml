@@ -1,7 +1,9 @@
 name: Build and Push Docker Image for Nmap
+
 on:
   push:
     branches: ["huge_scan*"]
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -9,6 +11,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
       - name: Build and push Nmap Docker image
         run: |
           TAG=$(date +%s)
