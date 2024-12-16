@@ -115,7 +115,7 @@ int nmap_raw_socket() {
   return rawsd;
 }
 
-int nmap_async_raw_socket() {
+int nmap_huge_raw_socket() {
   int rawsd;
   int one = 1;
 
@@ -123,7 +123,6 @@ int nmap_async_raw_socket() {
   if (rawsd < 0)
     return rawsd;
 
-  // Set socket to non-blocking mode
   int flags = fcntl(rawsd, F_GETFL, 0);
   if (flags == -1) {
     perror("fcntl F_GETFL");
