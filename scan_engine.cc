@@ -818,6 +818,9 @@ static void set_default_port_state(std::vector<Target *> &targets, stype scantyp
     case CONNECT_SCAN:
       (*target)->ports.setDefaultPortState(IPPROTO_TCP, PORT_FILTERED);
       break;
+    case SYN_HUGE_SCAN:
+      (*target)->ports.setDefaultPortState(IPPROTO_TCP, PORT_OPENFILTERED);
+      break;
     case SCTP_INIT_SCAN:
       (*target)->ports.setDefaultPortState(IPPROTO_SCTP, PORT_FILTERED);
       break;
@@ -880,8 +883,7 @@ void UltraScanInfo::Init(std::vector<Target *> &Targets, const struct scan_lists
     tcp_scan = true;
     break;
   case SYN_HUGE_SCAN:
-    tcp_scan = true;
-    perf.pingtime = 0;
+    tcp_scan = true; 
     async_scan = true;    
     break;
   case UDP_SCAN:
@@ -1319,6 +1321,7 @@ static int get_next_target_probe(const UltraScanInfo *USI, HostScanStats *hss,
     else {
       switch (USI->scantype) {
       case SYN_SCAN:
+      case SYN_HUGE_SCAN:
         pspec->pd.tcp.flags = TH_SYN;
         break;
       case ACK_SCAN:
