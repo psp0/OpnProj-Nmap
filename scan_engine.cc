@@ -867,7 +867,7 @@ void UltraScanInfo::Init(std::vector<Target *> &Targets, const struct scan_lists
   send_rate_meter.start(&now);
   tcp_scan = udp_scan = sctp_scan = prot_scan = false;
   ping_scan = noresp_open_scan = ping_scan_arp = ping_scan_nd = false;
-  async_scan = false;
+  huge_scan = false;
   memset((char *) &ptech, 0, sizeof(ptech));
   perf.init();
   switch (scantype) {
@@ -884,7 +884,7 @@ void UltraScanInfo::Init(std::vector<Target *> &Targets, const struct scan_lists
     break;
   case SYN_HUGE_SCAN:
     tcp_scan = true; 
-    async_scan = true;    
+    huge_scan = true;    
     break;
   case UDP_SCAN:
     noresp_open_scan = true;

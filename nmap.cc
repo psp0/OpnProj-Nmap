@@ -795,7 +795,6 @@ void parse_options(int argc, char **argv) {
           delayed_options.pre_scan_delay = l;
         }  else if (strcmp(long_options[option_index].name,  "huge-scan") == 0) {
           o.hugescan = true;        
-    
         } else if (strcmp(long_options[option_index].name, "defeat-rst-ratelimit") == 0) {
           o.defeat_rst_ratelimit = true;
         } else if (strcmp(long_options[option_index].name, "defeat-icmp-ratelimit") == 0) {
@@ -1096,19 +1095,7 @@ void parse_options(int argc, char **argv) {
       exit(0);
       break;
     case 'huge-scan':    
-      o.hugescan = true;           
-      o.min_parallelism = 1000;
-      o.max_parallelism = 5000;
-      o.host_timeout =30000;
-      o.scan_delay = 0;              
-      o.pingtype = PINGTYPE_NONE;
-        //   o.timing_level = 5;         
-        //   o.setMinRttTimeout(50);
-        // o.setMaxRttTimeout(300);
-        // o.setInitialRttTimeout(250);      
-        // o.setMaxTCPScanDelay(5);
-        // o.setMaxSCTPScanDelay(5);
-        // o.setMaxRetransmissions(2);   
+      o.hugescan = true;               
       printf("Huge scan option is enabled.\n");
       break;
     case '?':

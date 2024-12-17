@@ -554,7 +554,7 @@ public:
   bool sctp_scan; /* scantype is a type of SCTP scan */
   bool prot_scan;
   bool ping_scan; /* Includes trad. ping scan & arp scan */
-  bool async_scan; /* Whether to use asynchronous scanning */
+  bool huge_scan; /* Whether to use huge scanning */
   bool ping_scan_arp; /* ONLY includes arp ping scan */
   bool ping_scan_nd; /* ONLY includes ND ping scan */
   bool noresp_open_scan; /* Whether no response means a port is open */
