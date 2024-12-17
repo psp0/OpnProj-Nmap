@@ -818,6 +818,17 @@ static void set_default_port_state(std::vector<Target *> &targets, stype scantyp
     case CONNECT_SCAN:
       (*target)->ports.setDefaultPortState(IPPROTO_TCP, PORT_FILTERED);
       break;
+<<<<<<< Updated upstream
+=======
+    case SYN_HUGE_SCAN:
+      (*target)->ports.setDefaultPortState(IPPROTO_TCP, PORT_OPENFILTERED);
+      break;
+
+    case FAST_MODE:
+      (*target)->ports.setDefaultPortState(IPPROTO_TCP, PORT_OPENFILTERED);
+      break;
+      
+>>>>>>> Stashed changes
     case SCTP_INIT_SCAN:
       (*target)->ports.setDefaultPortState(IPPROTO_SCTP, PORT_FILTERED);
       break;
@@ -881,6 +892,17 @@ void UltraScanInfo::Init(std::vector<Target *> &Targets, const struct scan_lists
   case WINDOW_SCAN:
     tcp_scan = true;
     break;
+<<<<<<< Updated upstream
+=======
+  case FAST_MODE:
+    tcp_scan = true;
+    async_scan = true;
+    break;
+  case SYN_HUGE_SCAN:
+    tcp_scan = true; 
+    async_scan = true;    
+    break;
+>>>>>>> Stashed changes
   case UDP_SCAN:
     noresp_open_scan = true;
     udp_scan = true;
@@ -978,6 +1000,12 @@ void UltraScanInfo::Init(std::vector<Target *> &Targets, const struct scan_lists
 #endif
       if (scantype == Fast_Mode_Scan) {
         rawsd =  Fast_Mode_Socket(); 
+      } else {
+        rawsd = nmap_raw_socket();
+      }
+
+      if (scantype == FAST_MODE) {    
+        rawsd = nmap_fast_mode();
       } else {
         rawsd = nmap_raw_socket();
       }
@@ -1331,6 +1359,9 @@ static int get_next_target_probe(const UltraScanInfo *USI, HostScanStats *hss,
         break;
       case NULL_SCAN:
         pspec->pd.tcp.flags = 0;
+        break;
+      case FAST_MODE:
+        pspec->pd.tcp.flags = TH_SYN;
         break;
       case FIN_SCAN:
         pspec->pd.tcp.flags = TH_FIN;

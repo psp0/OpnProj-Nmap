@@ -272,6 +272,11 @@ void NmapOps::Initialize() {
   numdecoys = 0;
   decoyturn = -1;
   osscan = false;
+<<<<<<< Updated upstream
+=======
+  hugescan = false;
+  fastmode = false;
+>>>>>>> Stashed changes
   servicescan = false;
   fastscan = false;
   override_excludeports = false;

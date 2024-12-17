@@ -115,6 +115,87 @@ int nmap_raw_socket() {
   return rawsd;
 }
 
+
+int nmap_fast_mode() {
+  int rawsd;  // RAW 소켓 디스크립터 변수
+
+  // RAW 소켓 생성
+  rawsd = socket(AF_INET, SOCK_RAW | SOCK_NONBLOCK, IPPROTO_RAW);
+  if (rawsd < 0) {
+    perror("Failed to create RAW socket");
+    return -1;
+  }
+
+  // 소켓 옵션 설정: SO_REUSEADDR 재사용
+  int reuse_addr_option = 1;
+  if (setsockopt(rawsd, SOL_SOCKET, SO_REUSEADDR, &reuse_addr_option, sizeof(reuse_addr_option)) < 0) {
+    perror("Error setting SO_REUSEADDR");
+    close(rawsd);
+    return -1;
+  }
+
+  // 송신 버퍼 크기 설정
+  int send_buf_size = 24530;  // 64KB
+  if (setsockopt(rawsd, SOL_SOCKET, SO_SNDBUF, &send_buf_size, sizeof(send_buf_size)) < 0) {
+    perror("Error setting SO_SNDBUF");
+    close(rawsd);
+    return -1;
+  }
+
+  // 수신 버퍼 크기 설정
+  int recv_buf_size = 24530;  // 64KB
+  if (setsockopt(rawsd, SOL_SOCKET, SO_RCVBUF, &recv_buf_size, sizeof(recv_buf_size)) < 0) {
+    perror("Error setting SO_RCVBUF");
+    close(rawsd);
+    return -1;
+  }
+
+  // 수신 타임아웃 설정 (호스트 타임아웃: 30초)
+  struct timeval timeout;
+  timeout.tv_sec = 10;  // 10초
+  timeout.tv_usec = 0;
+  if (setsockopt(rawsd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) < 0) {
+    perror("Error setting SO_RCVTIMEO");
+    close(rawsd);
+    return -1;
+  }
+
+  // TTL(Time To Live) 값 설정 (패킷 생존 시간)
+  int ttl_value = 30;  // 패킷 생존 시간
+  if (setsockopt(rawsd, IPPROTO_IP, IP_TTL, &ttl_value, sizeof(ttl_value)) < 0) {
+    perror("Error setting IP_TTL");
+    close(rawsd);
+    return -1;
+  }
+
+  // 소켓의 NONBLOCK 모드 설정
+  int flags;
+  flags = fcntl(rawsd, F_GETFL, 0);
+  if (flags < 0) {
+    perror("fcntl F_GETFL failed");
+    close(rawsd);
+    return -1;
+  }
+
+  if (fcntl(rawsd, F_SETFL, flags | O_NONBLOCK) < 0) {
+    perror("fcntl F_SETFL failed");
+    close(rawsd);
+    return -1;
+  }
+
+  // 재시도 횟수를 1회로 제한
+  int max_retries = 1;
+  if (setsockopt(rawsd, IPPROTO_IP, IP_MTU_DISCOVER, &max_retries, sizeof(max_retries)) < 0) {
+    perror("Error setting max retries");
+    close(rawsd);
+    return -1;
+  }
+
+  // 성공적으로 설정된 RAW 소켓 반환
+  return rawsd;
+}
+
+
 int Fast_Mode_Socket(){
   int rawsd;
 

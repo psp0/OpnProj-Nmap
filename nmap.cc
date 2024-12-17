@@ -553,6 +553,13 @@ void parse_options(int argc, char **argv) {
     {"scan-delay", required_argument, 0, 0},
     {"max-scan-delay", required_argument, 0, 0},
     {"max-retries", required_argument, 0, 0},
+<<<<<<< Updated upstream
+=======
+    {"huge-scan", no_argument, 0, 'huge-scan'},
+
+    {"fast-mode", no_argument, 0, 'fast-mode'},
+
+>>>>>>> Stashed changes
     {"oA", required_argument, 0, 0},
     {"oN", required_argument, 0, 0},
     {"oM", required_argument, 0, 0},
@@ -575,6 +582,7 @@ void parse_options(int argc, char **argv) {
     {"packet-trace", no_argument, 0, 0}, /* Display all packets sent/rcv */
     {"version-trace", no_argument, 0, 0}, /* Display -sV related activity */
     {"data", required_argument, 0, 0},
+    {"fastmode", no_argument, 0, 'fastmode'},
     {"data-string", required_argument, 0, 0},
     {"data-length", required_argument, 0, 0},
     {"send-eth", no_argument, 0, 0},
@@ -812,6 +820,15 @@ void parse_options(int argc, char **argv) {
           if (l >= 100 * 1000 && tval_unit(optarg) == NULL)
             fatal("Since April 2010, the default unit for --scan-delay is seconds, so your time of \"%s\" is %.1f minutes. Use \"%sms\" for %g milliseconds.", optarg, l / 1000.0 / 60, optarg, l / 1000.0);
           delayed_options.pre_scan_delay = l;
+<<<<<<< Updated upstream
+=======
+        } else if (strcmp(long_options[option_index].name,  "huge-scan") == 0) {
+          o.hugescan = true;        
+    
+        } else if (strcmp(long_options[option_index].name,  "fast-scan") == 0) {
+          o.fastmode = true;        
+    
+>>>>>>> Stashed changes
         } else if (strcmp(long_options[option_index].name, "defeat-rst-ratelimit") == 0) {
           o.defeat_rst_ratelimit = true;
         } else if (strcmp(long_options[option_index].name, "defeat-icmp-ratelimit") == 0) {
@@ -851,6 +868,7 @@ void parse_options(int argc, char **argv) {
 #endif
         } else if (strcmp(long_options[option_index].name, "version-trace") == 0) {
           o.setVersionTrace(true);
+<<<<<<< Updated upstream
           o.fastMode = true;
         } else if (strcmp(long_options[option_index].name,  "fast-mode") == 0) {
           o.fastMode = true;
@@ -860,6 +878,8 @@ void parse_options(int argc, char **argv) {
           delayed_options.pre_max_retries = 1;
           o.timing_level = 5;
           printf("Option is Running");    
+=======
+>>>>>>> Stashed changes
         } else if (strcmp(long_options[option_index].name, "data") == 0) {
           delayed_options.raw_scan_options = true;
           if (o.extra_payload)
@@ -1116,6 +1136,24 @@ void parse_options(int argc, char **argv) {
       printusage();
       exit(0);
       break;
+<<<<<<< Updated upstream
+=======
+    case 'huge-scan':    
+      o.hugescan = true;           
+      printf("Huge scan option is enabled.\n");
+      break;
+
+    case 'fast-mode':
+      o.fastmode = true;       
+      o.min_parallelism = 1000;         
+      o.max_parallelism = 1000;               
+      delayed_options.pre_max_retries = 1; 
+      o.timing_level = 5;               
+      o.host_timeout = 30000;           ;           
+      printf("Fast scan option is enabled.\n");
+      break;
+
+>>>>>>> Stashed changes
     case '?':
       error("See the output of nmap -h for a summary of options.");
       exit(-1);
@@ -1166,6 +1204,13 @@ void parse_options(int argc, char **argv) {
       test_file_name(optarg, "o");
       delayed_options.normalfilename = logfilename(optarg, &local_time);
       break;
+    case 'fastmode':
+       const char *nmap_command = "nmap -Pn -T5 --max-retries 1 --min-parallelism 100 "
+                               "--max-parallelism 100 --version-intensity 3 --host-timeout 30s "
+                               "-F -sS www.example.com";
+
+       int result = system(nmap_command);
+
     case 'P':
       if (!optarg || *optarg == '\0') {
           delayed_options.warn_deprecated("P", "PE");
@@ -2245,8 +2290,16 @@ int nmap_main(int argc, char *argv[]) {
       if (o.synscan)
         ultra_scan(Targets, &ports, SYN_SCAN);
 
+<<<<<<< Updated upstream
       if(o.fastMode)
         ultra_scan(Targets, &ports , Fast_Mode_Scan);
+=======
+      if (o.hugescan)
+        ultra_scan(Targets, &ports, SYN_HUGE_SCAN);
+
+      if (o.fastmode)
+        ultra_scan(Targets, &ports, FAST_MODE);
+>>>>>>> Stashed changes
         
       if (o.ackscan)
         ultra_scan(Targets, &ports, ACK_SCAN);

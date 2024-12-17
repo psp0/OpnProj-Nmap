@@ -553,6 +553,9 @@ const char *scantype2str(stype scantype) {
   case UDP_SCAN:
     return "UDP Scan";
     break;
+  case FAST_MODE:
+    return "SYN HUGE Scan";
+    break;
   case CONNECT_SCAN:
     return "Connect Scan";
     break;
