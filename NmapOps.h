@@ -122,6 +122,7 @@ class NmapOps {
   bool have_pcap;
   u8 debugging;
   bool resuming;
+  bool portmonitor;
 
 #define PACKET_SEND_NOPREF 1
 #define PACKET_SEND_ETH_WEAK 2

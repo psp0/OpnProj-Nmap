@@ -226,6 +226,8 @@ void NmapOps::Initialize() {
   else
     isr00t = !(geteuid());
 #endif
+  portmonitor = false;
+  
   have_pcap = true;
   debugging = 0;
   verbose = 0;

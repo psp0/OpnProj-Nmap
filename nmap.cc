@@ -90,6 +90,7 @@
 #include "xml.h"
 #include "scan_lists.h"
 #include "payload.h"
+#include "port_monitor.h"
 
 #ifndef NOLUA
 #include "nse_main.h"
@@ -195,6 +196,7 @@ static void printusage() {
 
   printf("%s %s ( %s )\n"
          "Usage: nmap [Scan Type(s)] [Options] {target specification}\n"
+         "OPENSOURCE PROJECT LAST MODIFIER 12/15 5:00 PM\n"
          "TARGET SPECIFICATION:\n"
          "  Can pass hostnames, IP addresses, networks, etc.\n"
          "  Ex: scanme.nmap.org, microsoft.com/24, 192.168.0.1; 10.0.0-255.1-254\n"
@@ -610,6 +612,8 @@ void parse_options(int argc, char **argv) {
     {"port-ratio", required_argument, 0, 0},
     {"exclude-ports", required_argument, 0, 0},
     {"top-ports", required_argument, 0, 0},
+    {"test", no_argument, 0, 't'}, 
+    {"port-monitor", no_argument, 0, 0},
 #ifndef NOLUA
     {"script", required_argument, 0, 0},
     {"script-trace", no_argument, 0, 0},
@@ -654,6 +658,10 @@ void parse_options(int argc, char **argv) {
   while ((arg = getopt_long_only(argc, argv, "46Ab:D:d::e:Ffg:hIi:M:m:nO::o:P::p:qRrS:s::T:Vv::", long_options, &option_index)) != EOF) {
     switch (arg) {
     case 0:
+          if (strcmp(long_options[option_index].name, "port-monitor") == 0) {
+            o.portmonitor = true;
+          }
+          break;
 #ifndef NOLUA
       if (strcmp(long_options[option_index].name, "script") == 0) {
         o.script = true;
@@ -1032,6 +1040,9 @@ void parse_options(int argc, char **argv) {
       }
       delayed_options.af = AF_INET6;
 #endif /* !HAVE_IPV6 */
+      break;
+    case 't':
+      printf("Test option was called!\n");  // 간단한 테스트 메시지 출력
       break;
     case 'A':
       delayed_options.advanced = true;
@@ -2223,7 +2234,27 @@ int nmap_main(int argc, char *argv[]) {
       o.decoys[o.decoyturn] = Targets[0]->source();
 
     /* I now have the group for scanning in the Targets vector */
-
+if (!Targets.empty() && o.portmonitor) {
+    PortMonitor& monitor = PortMonitor::getInstance();
+    
+    for (targetno = 0; targetno < Targets.size(); targetno++) {
+        currenths = Targets[targetno];
+        monitor.addTarget(currenths);
+    }
+    
+    if (o.verbose)
+        log_write(LOG_STDOUT, "Starting port monitoring mode...\n");
+    port_monitor_init();
+    
+    // 사용자가 Ctrl+C를 누를 때까지 대기
+    log_write(LOG_STDOUT, "Press Ctrl+C to stop monitoring.\n");
+    while (!keyWasPressed()) {
+        sleep(1);  // CPU 사용량을 줄이기 위해 잠시 대기
+    }
+    
+    port_monitor_cleanup();
+    return 0;  // 모니터링 모드에서는 여기서 종료
+}
     if (!o.noportscan) {
       // Ultra_scan sets o.scantype for us so we don't have to worry
       if (o.synscan)

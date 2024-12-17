@@ -1,7 +1,7 @@
 FROM alpine:3.20
 
 ARG github_repo="https://github.com/psp0/opnprojNmap.git"
-ARG branch="huge_scan"
+ARG branch="main"
 
 RUN apk add --update --no-cache \
             ca-certificates \
